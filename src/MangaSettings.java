@@ -103,6 +103,8 @@ public class MangaSettings
 		{
 			e.printStackTrace();
 		}
+		
+		MangaDownloader.fatalError( "No " + propfile.getName() + " detected.  Please set the settings in this file and rerun the program." );
 	}
 	
 	public String get( String key )
