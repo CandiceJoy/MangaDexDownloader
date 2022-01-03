@@ -1,7 +1,6 @@
 # MangaDexDownloader
-Downloader and Archiver for MangaDex
 
-##WARNING: DO NOT USE THIS PROGRAM TO DOWNLOAD MANGA THAT IS LICENCED OR ILLEGAL TO DOWNLOAD WHERE YOU ARE!  I, THE AUTHOR OF THIS PROGRAM, DO NOT SUPPORT OR CONDONE THIS BEHAVIOUR UNDER ANY CIRCUMSTANCES OR FOR ANY REASON!!!  BY USING THIS PROGRAM, YOU AGREE THAT YOU WILL NOT DO THIS.                                 
+## WARNING: DO NOT USE THIS PROGRAM TO DOWNLOAD MANGA THAT IS LICENCED OR ILLEGAL TO DOWNLOAD WHERE YOU ARE!  I, THE AUTHOR OF THIS PROGRAM, DO NOT SUPPORT OR CONDONE THIS BEHAVIOUR UNDER ANY CIRCUMSTANCES OR FOR ANY REASON!!!  BY USING THIS PROGRAM, YOU AGREE THAT YOU WILL NOT DO THIS.                               
 
 The author of this program supports and encourages the art of Manga and encourages you to buy your Manga via any legal means available to you wherever and whenever possible.  This program is not, under any circumstances, designed to replace legal Manga purchases from sources that will financially benefit the original artists and publishers.  In the case where a Manga is not licenced where you are and it is legal to do so, you may use this program to download said Manga.  However, I encourage you to make otter legal and genuine purchases from sources that will financially benefit the original artists and publishers.
 
@@ -9,6 +8,7 @@ Likewise, the author of this program cannot be held responsible for any detrimen
 
 Please report any issues to https://github.com/CandiceJoy/MangaDexDownloader
 
+### Usage
 1) Run the *.bat file or execute the JAR some otter way
 2) The program will generate default settings and exit
 3) Set the settings in the generated config file to your liking
