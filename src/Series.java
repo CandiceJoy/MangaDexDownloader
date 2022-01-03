@@ -3,20 +3,20 @@ import java.util.HashMap;
 
 public class Series
 {
-	private String name;
-	private ArrayList<String> volumes;
-	private ArrayList<String> chapters;
-	private HashMap<String,String> chapter_volume;
-	private HashMap<Integer,String> page_chapter;
+	private final String name;
+	private final ArrayList<String> volumes;
+	private final ArrayList<String> chapters;
+	private final HashMap<String, String> chapter_volume;
+	private final HashMap<Integer, String> page_chapter;
 	private int pages;
 	
 	public Series( String name )
 	{
 		this.name = name;
-		volumes = new ArrayList<String>();
-		chapters = new ArrayList<String>();
-		chapter_volume = new HashMap<String,String>();
-		page_chapter = new HashMap<Integer,String>();
+		volumes = new ArrayList<>();
+		chapters = new ArrayList<>();
+		chapter_volume = new HashMap<>();
+		page_chapter = new HashMap<>();
 	}
 	
 	public String getName()
@@ -26,10 +26,7 @@ public class Series
 	
 	public String getVolume( int page )
 	{
-		String chapter = page_chapter.get( page );
-		String volume = chapter_volume.get( page );
-		
-		return volume;
+		return chapter_volume.get( page_chapter.get( page ) );
 	}
 	
 	public ArrayList<String> getVolumes()
@@ -39,8 +36,7 @@ public class Series
 	
 	public String getChapter( int page )
 	{
-		String chapter = page_chapter.get( page );
-		return chapter;
+		return page_chapter.get( page );
 	}
 	
 	public ArrayList<String> getChapters()
@@ -53,8 +49,9 @@ public class Series
 		return pages;
 	}
 	
-	public void addPage()
+	public void addPage( String chapter )
 	{
+		page_chapter.put( pages, chapter );
 		pages++;
 	}
 	
@@ -91,22 +88,22 @@ public class Series
 	
 	public String toString()
 	{
-		String output = "Volumes\n";
+		StringBuilder output = new StringBuilder( "Volumes\n" );
 		
 		for( String volume : volumes )
 		{
-			output += volume + "\n";
+			output.append( volume ).append( "\n" );
 		}
 		
-		output += "\nChapters\n";
+		output.append( "\nChapters\n" );
 		
 		for( String chapter : chapters )
 		{
-			output += chapter + "\n";
+			output.append( chapter ).append( "\n" );
 		}
 		
-		output += "\nLast Page: " + pages;
+		output.append( "\nLast Page: " ).append( pages );
 		
-		return output;
+		return output.toString();
 	}
 }

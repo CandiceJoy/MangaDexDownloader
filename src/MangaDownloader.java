@@ -7,9 +7,11 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -34,13 +36,13 @@ public class MangaDownloader
 		String uuid = settings.getDebug( "uuid" );
 		boolean clipboard = settings.getBool( "clipboard" );
 		
-		if( !arrayContains( MangaDownloader.SUPPORTED_OUTPUT_EXTENSIONS, manga_file_extension ) )
+		if( !arrayContains( manga_file_extension ) )
 		{
-			String formats = "";
+			StringBuilder formats = new StringBuilder();
 			
 			for( String format : MangaDownloader.SUPPORTED_OUTPUT_EXTENSIONS )
 			{
-				formats += format + " ";
+				formats.append( format ).append( " " );
 			}
 			
 			fatalError( manga_file_extension + " is not a supported output format; only the following formats are supported: " + formats );
@@ -65,11 +67,11 @@ public class MangaDownloader
 				{
 					try
 					{
-						Object o = t.getTransferData( DataFlavor.stringFlavor );
 						data = (String) t.getTransferData( DataFlavor.stringFlavor );
 					}
 					catch( IOException | UnsupportedFlavorException e )
 					{
+						//Do Nothing
 					}
 				}
 				
@@ -93,9 +95,9 @@ public class MangaDownloader
 		manga.process();
 	}
 	
-	private static boolean arrayContains( Object[] haystack, Object needle )
+	private static boolean arrayContains( Object needle )
 	{
-		for( Object o : haystack )
+		for( Object o : MangaDownloader.SUPPORTED_OUTPUT_EXTENSIONS )
 		{
 			if( o.equals( needle ) )
 			{
@@ -141,7 +143,6 @@ public class MangaDownloader
 			if( !success )
 			{
 				System.out.println( "Invalid UUID" );
-				continue;
 			}
 		}
 		
@@ -200,22 +201,16 @@ public class MangaDownloader
 	
 	private static String getError( String error, int start, int total_width )
 	{
-		String prebuffer = getRepeating( start - 1, " " );
-		String postbuffer = getRepeating( total_width - start - 2 - error_width_padding * 2, " " );
+		String prebuffer = getRepeating( start - 1 );
+		String postbuffer = getRepeating( total_width - start - 2 - error_width_padding * 2 );
 		
 		return "|" + prebuffer + error + postbuffer + "|";
 	}
 	
 	private static String getHeader( String str )
 	{
-		String header = "";
 		
-		for( int x = 0; x < str.length() + ( 2 * error_width_padding ) + 2; x++ )
-		{
-			header += "-";
-		}
-		
-		return header;
+		return "-".repeat( Math.max( 0, str.length() + ( 2 * error_width_padding ) + 2 ) );
 	}
 	
 	private static String getMessage( String str )
@@ -225,24 +220,13 @@ public class MangaDownloader
 	
 	private static String getPadding( int num )
 	{
-		return getRepeating( num, " " );
+		return getRepeating( num );
 	}
 	
-	private static String getPadding( String str )
+	private static String getRepeating( int num )
 	{
-		return getPadding( str.length() );
-	}
-	
-	private static String getRepeating( int num, String str )
-	{
-		String out = "";
 		
-		for( int x = 0; x < num; x++ )
-		{
-			out += str;
-		}
-		
-		return out;
+		return " ".repeat( Math.max( 0, num ) );
 	}
 	
 	private static void blankLines( String str )
@@ -257,7 +241,7 @@ public class MangaDownloader
 	{
 		int padding = (int) Math.ceil( (double) ( min_length - str.length() ) / 2.0 );
 		
-		return getRepeating( padding, " " ) + str + getRepeating( padding, " " );
+		return getRepeating( padding ) + str + getRepeating( padding );
 	}
 	
 	public static void printProgress( long startTime, long current, long total )
@@ -287,7 +271,7 @@ public class MangaDownloader
 				.append( '>' )
 				.append( String.join( "", Collections.nCopies( post_spaces, " " ) ) )
 				.append( ']' )
-				.append( String.join( "", Collections.nCopies( current == 0 ? (int) ( Math.log10( total ) ) : (int) ( ( (int) ( Math.log10( total ) ) - (int) ( Math.log10( current ) ) ) ), " " ) ) )
+				.append( String.join( "", Collections.nCopies( current == 0 ? (int) ( Math.log10( total ) ) : ( (int) ( Math.log10( total ) ) - (int) ( Math.log10( current ) ) ), " " ) ) )
 				.append( String.format( " %d/%d, ETA: %s", current, total, etaHms ) );
 		
 		System.out.print( string );
@@ -340,10 +324,6 @@ public class MangaDownloader
 			
 			return obj;
 		}
-		catch( MalformedURLException e )
-		{
-			e.printStackTrace();
-		}
 		catch( IOException e )
 		{
 			e.printStackTrace();
@@ -363,7 +343,7 @@ public class MangaDownloader
 		}
 		
 		JsonArray data = root.getJsonArray( "data" );
-		String uuid = data.get(0).asJsonObject().get( "id" ).toString();
+		String uuid = data.get( 0 ).asJsonObject().get( "id" ).toString();
 		uuid = uuid.substring( 1, uuid.length() - 1 );
 		return uuid;
 	}

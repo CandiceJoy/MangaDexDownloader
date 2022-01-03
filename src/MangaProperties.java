@@ -31,29 +31,34 @@ import java.util.*;
 
 public class MangaProperties extends Properties
 {
-	private TreeMap<String, String> comments;
-	private ArrayList<String> headers;
+	private static final char[] hexDigit = {
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+	};
+	private final TreeMap<String, String> comments;
+	private final ArrayList<String> headers;
 	
 	public MangaProperties()
 	{
 		super();
-		this.comments = new TreeMap<String, String>();
-		this.headers = new ArrayList<String>();
+		this.comments = new TreeMap<>();
+		this.headers = new ArrayList<>();
 	}
 	
-	public Object setProperty( String key, String value, String comment )
+	private static char toHex( int nibble )
 	{
-		Object o = super.setProperty( key, value );
+		return hexDigit[( nibble & 0xF )];
+	}
+	
+	public void setProperty( String key, String value, String comment )
+	{
+		super.setProperty( key, value );
 		comments.put( key, comment );
-		return o;
 	}
 	
 	public void store( OutputStream out )
 			throws IOException
 	{
-		store0( new BufferedWriter( new OutputStreamWriter( out, "8859_1" ) ),
-		        null,
-		        true );
+		store0( new BufferedWriter( new OutputStreamWriter( out, "8859_1" ) ) );
 	}
 	
 	public void addHeader( String header )
@@ -61,14 +66,10 @@ public class MangaProperties extends Properties
 		headers.add( header );
 	}
 	
-	private void store0( BufferedWriter bw, String comment, boolean escUnicode )
+	private void store0( BufferedWriter bw )
 			throws IOException
 	{
-		if( comment != null )
-		{
-			writeComments( bw, comment );
-		}
-		bw.write( "# " + new Date().toString() );
+		bw.write( "# " + new Date() );
 		bw.newLine();
 		
 		for( String line : headers )
@@ -84,11 +85,11 @@ public class MangaProperties extends Properties
 			{
 				String key = (String) e.nextElement();
 				String val = (String) get( key );
-				key = saveConvert( key, true, escUnicode );
+				key = saveConvert( key, true );
 				/* No need to escape embedded and trailing spaces for value, hence
 				 * pass false to flag.
 				 */
-				val = saveConvert( val, false, escUnicode );
+				val = saveConvert( val, false );
 				
 				String commentline = comments.get( key );
 				if( commentline != null )
@@ -109,66 +110,8 @@ public class MangaProperties extends Properties
 		bw.close();
 	}
 	
-	private static void writeComments( BufferedWriter bw, String comments )
-			throws IOException
-	{
-		bw.write( "#" );
-		int len = comments.length();
-		int current = 0;
-		int last = 0;
-		char[] uu = new char[6];
-		uu[0] = '\\';
-		uu[1] = 'u';
-		while( current < len )
-		{
-			char c = comments.charAt( current );
-			if( c > '\u00ff' || c == '\n' || c == '\r' )
-			{
-				if( last != current )
-					bw.write( comments.substring( last, current ) );
-				if( c > '\u00ff' )
-				{
-					uu[2] = toHex( ( c >> 12 ) & 0xf );
-					uu[3] = toHex( ( c >> 8 ) & 0xf );
-					uu[4] = toHex( ( c >> 4 ) & 0xf );
-					uu[5] = toHex( c & 0xf );
-					bw.write( new String( uu ) );
-				}
-				else
-				{
-					bw.newLine();
-					if( c == '\r' &&
-					    current != len - 1 &&
-					    comments.charAt( current + 1 ) == '\n' )
-					{
-						current++;
-					}
-					if( current == len - 1 ||
-					    ( comments.charAt( current + 1 ) != '#' &&
-					      comments.charAt( current + 1 ) != '!' ) )
-						bw.write( "#" );
-				}
-				last = current + 1;
-			}
-			current++;
-		}
-		if( last != current )
-			bw.write( comments.substring( last, current ) );
-		bw.newLine();
-	}
-	
-	private static final char[] hexDigit = {
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
-	};
-	
-	private static char toHex( int nibble )
-	{
-		return hexDigit[( nibble & 0xF )];
-	}
-	
 	private String saveConvert( String theString,
-	                            boolean escapeSpace,
-	                            boolean escapeUnicode )
+	                            boolean escapeSpace )
 	{
 		int len = theString.length();
 		int bufLen = len * 2;
@@ -176,7 +119,7 @@ public class MangaProperties extends Properties
 		{
 			bufLen = Integer.MAX_VALUE;
 		}
-		StringBuffer outBuffer = new StringBuffer( bufLen );
+		StringBuilder outBuffer = new StringBuilder( bufLen );
 		
 		for( int x = 0; x < len; x++ )
 		{
@@ -225,7 +168,7 @@ public class MangaProperties extends Properties
 					outBuffer.append( aChar );
 					break;
 				default:
-					if( ( ( aChar < 0x0020 ) || ( aChar > 0x007e ) ) & escapeUnicode )
+					if( ( ( aChar < 0x0020 ) || ( aChar > 0x007e ) ) )
 					{
 						outBuffer.append( '\\' );
 						outBuffer.append( 'u' );
