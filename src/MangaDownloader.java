@@ -21,12 +21,9 @@ import java.util.concurrent.TimeUnit;
 
 public class MangaDownloader
 {
-	public static final File LOG_FILE = new File( "log.log" );
 	public static final File SETTINGS_FILE = new File( "manga.properties" );
 	public static final String[] SUPPORTED_OUTPUT_EXTENSIONS = new String[]{ ".cbz", ".zip" };
 	private static final MangaSettings settings = new MangaSettings( SETTINGS_FILE );
-	private static final int error_blank_lines = 1;
-	private static final int error_width_padding = 5;
 	
 	public static void main( String[] str )
 	{
@@ -209,25 +206,12 @@ public class MangaDownloader
 	
 	public static JsonObject query( String url_in, MangaSettings settings )
 	{
-		boolean debug;
-		
-		if( settings.getDebug( "enabled" ) != null )
-		{
-			debug = settings.getDebug( "enabled" ).equals( "true" );
-		}
-		else
-		{
-			debug = false;
-		}
+		settings.getDebug( "enabled" );
 		
 		try
 		{
 			URL url = new URL( url_in );
-			
-			if( debug )
-			{
-				System.out.println( "Query: " + url );
-			}
+			Log.debug( "Query: " + url );
 			
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod( "GET" );
@@ -242,10 +226,7 @@ public class MangaDownloader
 			JsonObject obj = reader.readObject();
 			conn.disconnect();
 			
-			if( debug )
-			{
-				System.out.println( "Response: " + obj );
-			}
+			Log.debug( "Response: " + obj );
 			
 			return obj;
 		}

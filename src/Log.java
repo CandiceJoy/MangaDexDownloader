@@ -9,7 +9,6 @@ import java.util.stream.Stream;
 
 public class Log
 {
-	private static final String LOGFILE = "log.log";
 	private static final Properties properties = new Properties();
 	
 	static
@@ -34,24 +33,16 @@ public class Log
 		Logger.getRootLogger().setLevel( Level.TRACE );
 	}
 	
-	public static void log( Object message )
+	public static void debug( Object message )
 	{
 		Logger logger = Logger.getLogger( getCallingClass() );
-		
-		if( logger.isDebugEnabled() )
-		{
-			logger.debug( "- " + message );
-		}
+		logger.debug( "- " + message );
 	}
 	
 	public static void trace( Object message )
 	{
 		Logger logger = Logger.getLogger( getCallingClass() );
-		
-		if( logger.isTraceEnabled() )
-		{
-			logger.trace( "- " + message );
-		}
+		logger.trace( "- " + message );
 	}
 	
 	public static void warn( Object message )
@@ -69,11 +60,7 @@ public class Log
 	public static void info( Object message )
 	{
 		Logger logger = Logger.getLogger( getCallingClass() );
-		
-		if( logger.isInfoEnabled() )
-		{
-			logger.info( "- " + message );
-		}
+		logger.info( "- " + message );
 	}
 	
 	public static void fatal( Object message )
