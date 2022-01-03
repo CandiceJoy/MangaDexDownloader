@@ -37,7 +37,7 @@ public class MangaDownloaderThread extends Thread
 		}
 		catch( IOException e )
 		{
-			e.printStackTrace();
+			Log.error( e );
 		}
 		
 		manga.threadFinished();

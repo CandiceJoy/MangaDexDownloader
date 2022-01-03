@@ -1,0 +1,38 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Class" type="Application" factoryName="Application" show_console_on_std_err="true" show_console_on_std_out="true">
+    <output_file path="C:\Users\Candice\Dropbox\Programming\Manga\console.log" is_save="true" />
+    <log_file alias="Log" path="$PROJECT_DIR$/log.log" show_all="true" skipped="false" />
+    <log_file alias="Settings" path="$PROJECT_DIR$/manga.properties" skipped="false" />
+    <option name="MAIN_CLASS_NAME" value="MangaDownloader" />
+    <module name="Manga" />
+    <extension name="coverage" sample_coverage="false">
+      <pattern>
+        <option name="PATTERN" value="Manga" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="MangaDownloader" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="MangaDownloaderThread" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="MangaProperties" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="MangaSettings" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+      <pattern>
+        <option name="PATTERN" value="Series" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

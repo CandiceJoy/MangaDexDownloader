@@ -101,8 +101,8 @@ public class Manga
 		fetchMetadata();
 		this.title = sanitise( fetchTitle() );
 		series = new Series( title );
-		System.out.println( "Title: " + title );
-		System.out.println( "UUID: " + uuid );
+		Log.info( "Title: " + title );
+		Log.info( "UUID: " + uuid );
 		fetchChapterURLs();
 		threads_finished = 0;
 		next_thread = 0;
@@ -110,7 +110,7 @@ public class Manga
 		
 		if( debug )
 		{
-			System.out.println( "Total downloads: " + download_urls.size() );
+			Log.info( "Total downloads: " + download_urls.size() );
 		}
 	}
 	
@@ -199,11 +199,11 @@ public class Manga
 		{
 			int last_chapter = Integer.parseInt( lastchap );
 			
-			System.out.println( "Last Chapter: " + last_chapter );
+			Log.info( "Last Chapter: " + last_chapter );
 			
 			if( series.getNumChapters() < last_chapter && series.getNumChapters() < 500 )
 			{
-				MangaDownloader.warning( "Not all chapters are available" );
+				Log.warn( "Not all chapters are available" );
 			}
 		}
 		catch( NumberFormatException e )
@@ -213,11 +213,11 @@ public class Manga
 		
 		if( series.getNumChapters() == 500 )
 		{
-			MangaDownloader.warning( "More than 500 chapters available; only the first 500 will be downloaded" );
+			Log.warn( "More than 500 chapters available; only the first 500 will be downloaded" );
 		}
 		else
 		{
-			System.out.println( "Available Chapters: " + series.getNumChapters() );
+			Log.info( "Available Chapters: " + series.getNumChapters() );
 		}
 	}
 	
@@ -228,7 +228,7 @@ public class Manga
 		
 		if( !status.equals( "completed" ) )
 		{
-			MangaDownloader.warning( "This series is incomplete; status is not 'completed'" );
+			Log.warn( "This series is incomplete; status is not 'completed'" );
 		}
 		
 		JsonObject title = attributes.getJsonObject( "title" );
@@ -267,13 +267,12 @@ public class Manga
 		{
 			if( series_folder.exists() )
 			{
-				System.out.println( "Manga already exists, but so does the download...re-archiving" );
+				Log.info( "Manga already exists, but so does the download...re-archiving" );
 				return false;
 			}
 			else
 			{
-				System.out.println( "Manga already exists, no need to download it again :)" );
-				System.exit( 0 );
+				Log.fatal( "Manga already exists, no need to download it again :)" );
 			}
 		}
 		
@@ -281,13 +280,12 @@ public class Manga
 		{
 			if( series_folder.exists() )
 			{
-				System.out.println( "Manga already exists, but so does the download...re-archiving" );
+				Log.info( "Manga already exists, but so does the download...re-archiving" );
 				return false;
 			}
 			else
 			{
-				System.out.println( "Manga already exists, no need to download it again :)" );
-				System.exit( 0 );
+				Log.fatal( "Manga already exists, no need to download it again :)" );
 			}
 		}
 		
@@ -313,13 +311,13 @@ public class Manga
 			if( !f.exists() )
 			{
 				current = getNumberFromFile( f, settings );
-				System.out.println( "Download interrupt detected; resuming (the ETA may not be accurate)..." );
+				Log.info( "Download interrupt detected; resuming (the ETA may not be accurate)..." );
 				start_download_at = current;
 				return;
 			}
 		}
 		
-		System.out.println( "Entire download detected, skipping download..." );
+		Log.info( "Entire download detected, skipping download..." );
 		start_download_at = Integer.MIN_VALUE;
 		current_download = start_download_at;
 	}
@@ -401,7 +399,7 @@ public class Manga
 			}
 			catch( IOException e )
 			{
-				e.printStackTrace();
+				Log.error( e );
 			}
 			
 			current_download++;
@@ -411,17 +409,16 @@ public class Manga
 	
 	public void process()
 	{
-		System.out.println( series );
+		Log.info( series );
 		
 		if( shouldDoDownload() ) //ends the program if nothing to be done
 		{
 			if( debug_dont_download )
 			{
-				MangaDownloader.fatalError( "Debug: Don't download" );
-				System.exit( 0 );
+				Log.fatal( "Debug: Don't download" );
 			}
 			
-			System.out.println( "Downloading..." );
+			Log.info( "Downloading..." );
 			start_time = System.currentTimeMillis();
 			
 			if( multithreaded )
@@ -453,7 +450,7 @@ public class Manga
 		if( !split )
 		{
 			//Single Archive
-			System.out.println( "Archiving..." );
+			Log.info( "Archiving..." );
 			String path = destination + MangaSettings.SLASH + title + manga_ext;
 			
 			File[] files = new File( temp_folder + MangaSettings.SLASH + title ).listFiles();
@@ -493,14 +490,14 @@ public class Manga
 			archive( current_files, destination + MangaSettings.SLASH + title + " " + current_volume + manga_ext, files_done );
 		}
 		
-		System.out.println( "Archiving complete!  You can find your manga in " + destination.getAbsolutePath() );
+		Log.info( "Archiving complete!  You can find your manga in " + destination.getAbsolutePath() );
 	}
 	
 	private void updateLibrary()
 	{
 		if( library_updater != null && library_updater.exists() )
 		{
-			System.out.println( "Updating library..." );
+			Log.info( "Updating library..." );
 			
 			ProcessBuilder pb = new ProcessBuilder( "cmd", "/k", library_updater.getAbsolutePath() );
 			pb.inheritIO();
@@ -534,7 +531,7 @@ public class Manga
 		}
 		catch( Exception e )
 		{
-			e.printStackTrace();
+			Log.error( e );
 		}
 		
 		src.renameTo( dest );

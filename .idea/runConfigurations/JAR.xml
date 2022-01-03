@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="JAR" type="JarApplication" activateToolWindowBeforeRun="false" show_console_on_std_err="true" show_console_on_std_out="true">
+    <output_file path="$PROJECT_DIR$/out/artifacts/Manga_jar/console.log" />
+    <extension name="coverage" sample_coverage="false" track_test_folders="true" />
+    <option name="JAR_PATH" value="$PROJECT_DIR$/out/artifacts/Manga_jar/Manga.jar" />
+    <option name="WORKING_DIRECTORY" value="C:\Users\Candice\Dropbox\Programming\Manga\out\artifacts\Manga_jar\manga" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <method v="2">
+      <option name="BuildArtifacts" enabled="true">
+        <artifact name="Manga:jar" />
+      </option>
+    </method>
+  </configuration>
+</component>

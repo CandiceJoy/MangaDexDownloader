@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MangaDownloader
 {
+	public static final File LOG_FILE = new File( "log.log" );
 	public static final File SETTINGS_FILE = new File( "manga.properties" );
 	public static final String[] SUPPORTED_OUTPUT_EXTENSIONS = new String[]{ ".cbz", ".zip" };
 	private static final MangaSettings settings = new MangaSettings( SETTINGS_FILE );
@@ -45,13 +46,13 @@ public class MangaDownloader
 				formats.append( format ).append( " " );
 			}
 			
-			fatalError( manga_file_extension + " is not a supported output format; only the following formats are supported: " + formats );
+			Log.fatal( manga_file_extension + " is not a supported output format; only the following formats are supported: " + formats );
 			System.exit( 0 );
 		}
 		
 		if( max_connections > 10 )
 		{
-			fatalError( "More than 10 simultaneous connections not allowed!!!" );
+			Log.fatal( "More than 10 simultaneous connections not allowed!!!" );
 			System.exit( 0 );
 		}
 		
@@ -123,7 +124,7 @@ public class MangaDownloader
 			}
 			catch( IOException e )
 			{
-				e.printStackTrace();
+				Log.error( e );
 			}
 			
 			if( isValidUUID( uuid ) )
@@ -142,7 +143,7 @@ public class MangaDownloader
 			
 			if( !success )
 			{
-				System.out.println( "Invalid UUID" );
+				Log.error( "Invalid UUID" );
 			}
 		}
 		
@@ -166,82 +167,6 @@ public class MangaDownloader
 		}
 		
 		return true;
-	}
-	
-	public static void warning( String str )
-	{
-		System.out.println( "!Warning! " + str );
-	}
-	
-	public static void error( String str )
-	{
-		System.out.println( "!!!ERROR!!! " + str );
-	}
-	
-	public static void fatalError( String str )
-	{
-		String error_text = "FATAL ERROR";
-		
-		if( str.length() < error_text.length() )
-		{
-			str = padString( str, error_text.length() );
-		}
-		
-		int total_width = str.length() + 2 + ( error_width_padding * 2 );
-		int error_start = total_width / 2 - error_text.length() / 2;
-		
-		System.out.println( getHeader( str ) );
-		blankLines( str );
-		System.out.println( getError( error_text, error_start, total_width ) );
-		System.out.println( getMessage( str ) );
-		blankLines( str );
-		System.out.println( getHeader( str ) );
-		System.exit( 0 );
-	}
-	
-	private static String getError( String error, int start, int total_width )
-	{
-		String prebuffer = getRepeating( start - 1 );
-		String postbuffer = getRepeating( total_width - start - 2 - error_width_padding * 2 );
-		
-		return "|" + prebuffer + error + postbuffer + "|";
-	}
-	
-	private static String getHeader( String str )
-	{
-		
-		return "-".repeat( Math.max( 0, str.length() + ( 2 * error_width_padding ) + 2 ) );
-	}
-	
-	private static String getMessage( String str )
-	{
-		return "|" + getPadding( error_width_padding ) + str + getPadding( error_width_padding ) + "|";
-	}
-	
-	private static String getPadding( int num )
-	{
-		return getRepeating( num );
-	}
-	
-	private static String getRepeating( int num )
-	{
-		
-		return " ".repeat( Math.max( 0, num ) );
-	}
-	
-	private static void blankLines( String str )
-	{
-		for( int x = 0; x < error_blank_lines; x++ )
-		{
-			System.out.println( "|" + getPadding( str.length() + ( 2 * error_width_padding ) ) + "|" );
-		}
-	}
-	
-	private static String padString( String str, int min_length )
-	{
-		int padding = (int) Math.ceil( (double) ( min_length - str.length() ) / 2.0 );
-		
-		return getRepeating( padding ) + str + getRepeating( padding );
 	}
 	
 	public static void printProgress( long startTime, long current, long total )
@@ -310,7 +235,7 @@ public class MangaDownloader
 			
 			if( conn.getResponseCode() != 200 )
 			{
-				MangaDownloader.error( "HTTP error code : " + conn.getResponseCode() );
+				Log.error( "HTTP error code : " + conn.getResponseCode() );
 			}
 			
 			JsonReader reader = Json.createReader( conn.getInputStream() );
@@ -326,7 +251,7 @@ public class MangaDownloader
 		}
 		catch( IOException e )
 		{
-			e.printStackTrace();
+			Log.error( e );
 		}
 		
 		throw new RuntimeException( "Could not get Json from URL" );
