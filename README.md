@@ -6,7 +6,7 @@ The author of this program supports and encourages the art of Manga and encourag
 
 Likewise, the author of this program cannot be held responsible for any detrimental effects this program has.  The author has made a good faith effort to ensure this program will not produce any detrimental effects, but such effects cannot completely be ruled out as a possibility.  You bear all responsibility for the use of this program.
 
-Please report any issues to https://github.com/CandiceJoy/MangaDexDownloader
+Please report any issues to https://github.com/CandiceJoy/MangaDexDownloader/issues
 
 ### Usage
 1) Run the *.bat file or execute the JAR some otter way
