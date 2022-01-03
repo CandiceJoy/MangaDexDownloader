@@ -4,14 +4,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 public class MangaSettings
 {
-	private static final String DEBUG_TAG = "debug-";
-	private MangaProperties properties = null;
 	public static final String SLASH = ( System.getProperty( "os.name" ).indexOf( "Windows" ) == 0 ) ? "\\" : "/";
+	private static final String DEBUG_TAG = "debug-";
 	private final File propfile;
-	private final String REQUIRED_MARKER = "yes"; //Required column must match this to be considered required
 	private final String[][] PROPERTIES_SCHEMA = new String[][]{ //4 columns, col 0 - property name, col 1 - property value, col 2 - required? (optional, defaults to yes), col 3 - comment (optional)
 	                                                             { "data_saver", "false", "yes", "MangaDex's Data Saver feature" },
 	                                                             { "temp_folder", "manga", "yes", "The folder where the raw images will be stored, with folders for each series inside; these are deleted once archived successfully" },
@@ -32,6 +31,7 @@ public class MangaSettings
 	private final String[][] BOOL_VALUES = new String[][]{ { "true", "false" },
 	                                                       { "yes", "no", },
 	                                                       { "1", "0" } }; //trues in [row][0], falses in [row][1]; assume all lowercase
+	private MangaProperties properties = null;
 	
 	public MangaSettings( File propfile_in )
 	{
@@ -81,14 +81,14 @@ public class MangaSettings
 		properties.addHeader( "WARNING 2: If the series is incomplete or has duplicate chapters on MangaDex, so too will the output of this program." );
 		properties.addHeader( "To find the MangaDex UUID, find the Manga in MangaDex and find the UUID in the URL." );
 		
-		for( int row = 0; row < PROPERTIES_SCHEMA.length; row++ )
+		for( String[] strings : PROPERTIES_SCHEMA )
 		{
-			String key = PROPERTIES_SCHEMA[row][0];
-			String value = PROPERTIES_SCHEMA[row][1];
+			String key = strings[0];
+			String value = strings[1];
 			
-			if( PROPERTIES_SCHEMA[row].length >= 4 )
+			if( strings.length >= 4 )
 			{
-				String comment = PROPERTIES_SCHEMA[row][3];
+				String comment = strings[3];
 				properties.setProperty( key, value, comment );
 			}
 			
@@ -187,7 +187,7 @@ public class MangaSettings
 			}
 			else
 			{
-				return getDefault( key ).charAt( 0 );
+				return Objects.requireNonNull( getDefault( key ) ).charAt( 0 );
 			}
 		}
 		
@@ -263,16 +263,10 @@ public class MangaSettings
 	
 	private String getDefault( String propkey )
 	{
-		for( int row = 0; row < PROPERTIES_SCHEMA.length; row++ )
+		for( String[] strings : PROPERTIES_SCHEMA )
 		{
-			String searchkey = PROPERTIES_SCHEMA[row][0];
-			String value = PROPERTIES_SCHEMA[row][1];
-			boolean required = PROPERTIES_SCHEMA[row][2].toLowerCase().equals( REQUIRED_MARKER );
-			
-			if( PROPERTIES_SCHEMA[row].length >= 4 )
-			{
-				String comment = PROPERTIES_SCHEMA[row][3];
-			}
+			String searchkey = strings[0];
+			String value = strings[1];
 			
 			if( searchkey.equals( propkey ) )
 			{
@@ -285,9 +279,9 @@ public class MangaSettings
 	
 	private boolean isBooleanValue( String value )
 	{
-		for( int row = 0; row < BOOL_VALUES.length; row++ )
+		for( String[] bool_value : BOOL_VALUES )
 		{
-			if( value.toLowerCase().equals( BOOL_VALUES[row][0] ) || value.toLowerCase().equals( BOOL_VALUES[row][1] ) )
+			if( value.toLowerCase().equals( bool_value[0] ) || value.toLowerCase().equals( bool_value[1] ) )
 			{
 				return true;
 			}
@@ -298,9 +292,9 @@ public class MangaSettings
 	
 	private boolean isTrue( String value )
 	{
-		for( int row = 0; row < BOOL_VALUES.length; row++ )
+		for( String[] bool_value : BOOL_VALUES )
 		{
-			if( value.toLowerCase().equals( BOOL_VALUES[row][0] ) ) //trues are column 0
+			if( value.toLowerCase().equals( bool_value[0] ) ) //trues are column 0
 			{
 				return true;
 			}
@@ -321,16 +315,17 @@ public class MangaSettings
 			return false;
 		}
 		
-		for( int row = 0; row < PROPERTIES_SCHEMA.length; row++ )
+		for( String[] strings : PROPERTIES_SCHEMA )
 		{
-			String searchkey = PROPERTIES_SCHEMA[row][0];
-			String value = PROPERTIES_SCHEMA[row][1];
+			String searchkey = strings[0];
 			
 			boolean required = false;
 			
-			if( PROPERTIES_SCHEMA[row].length >= 3 )
+			if( strings.length >= 3 )
 			{
-				required = PROPERTIES_SCHEMA[row][2].toLowerCase().equals( REQUIRED_MARKER );
+				//Required column must match this to be considered required
+				String REQUIRED_MARKER = "yes";
+				required = strings[2].toLowerCase().equals( REQUIRED_MARKER );
 			}
 			
 			if( searchkey.equals( propkey ) )
@@ -344,9 +339,9 @@ public class MangaSettings
 	
 	private void checkSettings()
 	{
-		for( int row = 0; row < PROPERTIES_SCHEMA.length; row++ )
+		for( String[] strings : PROPERTIES_SCHEMA )
 		{
-			String key = PROPERTIES_SCHEMA[row][0];
+			String key = strings[0];
 			
 			if( properties.get( key ) == null )
 			{

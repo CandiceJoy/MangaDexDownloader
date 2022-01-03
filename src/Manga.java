@@ -1,32 +1,23 @@
-import kotlin.collections.SetsKt;
-
-import javax.json.*;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.io.*;
-import java.net.*;
+import java.net.URL;
+import java.nio.file.FileSystem;
 import java.nio.file.*;
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.zip.Deflater;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class Manga
 {
-	private String uuid;
-	private JsonObject json;
-	private ArrayList<String> download_urls; //all URLs in series
-	private String title;
-	private int threads_finished; //# of threads finished, based on downloads.size()
-	private ArrayList<MangaDownloaderThread> download_threads; //remaining downloads
-	private int next_thread; //index of downloads
-	private Series series;
-	//private int max_chapter;
-	private MangaSettings settings;
-	private int start_download_at;
-	private int current_download;
-	private long start_time;
-	private int num_chapters;
-	
+	private final String uuid;
+	private final ArrayList<String> download_urls; //all URLs in series
+	private final String title;
+	private final ArrayList<MangaDownloaderThread> download_threads; //remaining downloads
+	private final Series series;
+	private final MangaSettings settings;
 	//Settings
 	private final boolean debug;
 	private final String language;
@@ -40,11 +31,16 @@ public class Manga
 	private final String format;
 	private final char symbol;
 	private final File library_updater;
-	private final DecimalFormat percent_format;
 	private final boolean datasaver;
 	private final File series_folder;
 	private final boolean debug_dont_download;
 	private final boolean do_archive;
+	private JsonObject json;
+	private int threads_finished; //# of threads finished, based on downloads.size()
+	private int next_thread; //index of downloads
+	private int start_download_at;
+	private int current_download;
+	private long start_time;
 	
 	public Manga( String uuid_in, MangaSettings properties_in )
 	{
@@ -88,7 +84,6 @@ public class Manga
 			library_updater = null;
 		}
 		
-		percent_format = new DecimalFormat( settings.get( "percent_format" ) );
 		datasaver = settings.getBool( "data_saver" );
 		do_archive = settings.getBool( "archive" );
 		
@@ -101,8 +96,8 @@ public class Manga
 			debug_dont_download = false;
 		}
 		
-		download_urls = new ArrayList<String>();
-		download_threads = new ArrayList<MangaDownloaderThread>();
+		download_urls = new ArrayList<>();
+		download_threads = new ArrayList<>();
 		fetchMetadata();
 		this.title = sanitise( fetchTitle() );
 		series = new Series( title );
@@ -117,6 +112,23 @@ public class Manga
 		{
 			System.out.println( "Total downloads: " + download_urls.size() );
 		}
+	}
+	
+	public static int getNumberFromFile( File file, MangaSettings settings )
+	{
+		String format = settings.get( "image_filename_format" );
+		String image_ext = settings.get( "image_file_extension" );
+		char symbol = settings.getChar( "image_filename_format_symbol" );
+		
+		String pattern = format + image_ext;
+		String name = file.getName();
+		
+		int difference = name.length() - pattern.length() + 1;
+		
+		int start = pattern.indexOf( symbol );
+		int end = start + difference;
+		
+		return Integer.parseInt( name.substring( start, end ) );
 	}
 	
 	private void fetchMetadata()
@@ -151,7 +163,7 @@ public class Manga
 			datamode_json = "data";
 			datamode_url = "data";
 		}
-
+		
 		//Chapter
 		for( JsonValue data2 : data )
 		{
@@ -176,7 +188,7 @@ public class Manga
 			//Page
 			for( JsonValue val : files )
 			{
-				series.addPage();
+				series.addPage( chapter );
 				download_urls.add( baseurl + "/" + datamode_url + "/" + hash + "/" + val.toString().substring( 1, val.toString().length() - 1 ) );
 			}
 		}
@@ -196,6 +208,7 @@ public class Manga
 		}
 		catch( NumberFormatException e )
 		{
+			//Do nothing
 		}
 		
 		if( series.getNumChapters() == 500 )
@@ -219,8 +232,7 @@ public class Manga
 		}
 		
 		JsonObject title = attributes.getJsonObject( "title" );
-		String title_language = title.getString( language );
-		return title_language;
+		return title.getString( language );
 	}
 	
 	public String getTitle()
@@ -251,7 +263,7 @@ public class Manga
 		File manga_out = new File( destination + MangaSettings.SLASH + title + manga_ext ); //Output if not splitting
 		File lastvol = new File( destination + MangaSettings.SLASH + title + " " + series.getLastVolume() + manga_ext ); //Last file if splitting
 		
-		if( split && lastvol != null && lastvol.exists() )
+		if( split && lastvol.exists() )
 		{
 			if( series_folder.exists() )
 			{
@@ -284,7 +296,7 @@ public class Manga
 	
 	private void populateDownloadStart()
 	{
-		int current = 0;
+		int current;
 		
 		if( !series_folder.exists() )
 		{
@@ -349,6 +361,7 @@ public class Manga
 				if( mangaDownloaderThread.isAlive() )
 				{
 					still_alive = true;
+					break;
 				}
 			}
 		}while( still_alive );
@@ -373,7 +386,7 @@ public class Manga
 				InputStream in = new BufferedInputStream( url.openStream() );
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				byte[] buf = new byte[1024];
-				int n = 0;
+				int n;
 				while( -1 != ( n = in.read( buf ) ) )
 				{
 					out.write( buf, 0, n );
@@ -442,7 +455,6 @@ public class Manga
 			//Single Archive
 			System.out.println( "Archiving..." );
 			String path = destination + MangaSettings.SLASH + title + manga_ext;
-			File output = new File( path );
 			
 			File[] files = new File( temp_folder + MangaSettings.SLASH + title ).listFiles();
 			archive( files, path, 0 );
@@ -452,7 +464,6 @@ public class Manga
 			//Multiple Archives
 			int pages = series.getNumPages();
 			
-			String current_chapter = null;
 			String current_volume = series.getVolume( 0 );
 			
 			File[] current_files = new File[0];
@@ -460,10 +471,9 @@ public class Manga
 			
 			for( int page = 0; page < pages; page++ )
 			{
-				String chapter = series.getChapter( page );
 				String volume = series.getVolume( page );
 				
-				if( volume == current_volume )
+				if( Objects.equals( volume, current_volume ) )
 				{
 					File[] old = new File[current_files.length];
 					System.arraycopy( current_files, 0, old, 0, current_files.length );
@@ -493,17 +503,7 @@ public class Manga
 			System.out.println( "Updating library..." );
 			
 			ProcessBuilder pb = new ProcessBuilder( "cmd", "/k", library_updater.getAbsolutePath() );
-			File dir = destination;
-			
-			try
-			{
-				pb.inheritIO();
-				Process p = pb.start();
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
+			pb.inheritIO();
 		}
 	}
 	
@@ -538,23 +538,6 @@ public class Manga
 		}
 		
 		src.renameTo( dest );
-	}
-	
-	public static int getNumberFromFile( File file, MangaSettings settings )
-	{
-		String format = settings.get( "image_filename_format" );
-		String image_ext = settings.get( "image_file_extension" );
-		char symbol = settings.getChar( "image_filename_format_symbol" );
-		
-		String pattern = format + image_ext;
-		String name = file.getName();
-		
-		int difference = name.length() - pattern.length() + 1;
-		
-		int start = pattern.indexOf( symbol );
-		int end = start + difference;
-		
-		return Integer.parseInt( name.substring( start, end ) );
 	}
 	
 	private String getFilename( int number )

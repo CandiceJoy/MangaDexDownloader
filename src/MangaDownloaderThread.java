@@ -3,9 +3,9 @@ import java.net.URL;
 
 public class MangaDownloaderThread extends Thread
 {
-	private Manga manga;
-	private String in_path;
-	private String out_path;
+	private final Manga manga;
+	private final String in_path;
+	private final String out_path;
 	
 	public MangaDownloaderThread( Manga manga_in, String url_in, String out_in )
 	{
@@ -22,7 +22,7 @@ public class MangaDownloaderThread extends Thread
 			InputStream in = new BufferedInputStream( url.openStream() );
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			byte[] buf = new byte[1024];
-			int n = 0;
+			int n;
 			while( -1 != ( n = in.read( buf ) ) )
 			{
 				out.write( buf, 0, n );
