@@ -1,8 +1,13 @@
+/out/production/
+/out/artifacts/
+/logs/
+/manga/
 *.class
 *.jar
 *.log
 *.properties
 *.cbz
+*.mf
 !*.xml
 !*.java
 !*.bat
