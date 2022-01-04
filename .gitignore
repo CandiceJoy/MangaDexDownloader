@@ -1,10 +1,9 @@
-/console.log
-/log.log
-/manga.properties
-/logs/
-/manga/
-/out/
-!/out/artifacts/Manga_jar/Manga.bat
-!/out/artifacts/Manga_jar/Manga.sh
 *.class
 *.jar
+*.log
+*.properties
+*.cbz
+!*.xml
+!*.java
+!*.bat
+!*.sh
