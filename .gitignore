@@ -4,3 +4,7 @@
 /logs/
 /manga/
 /out/
+!*.bat
+!*.sh
+*.class
+*.jar
