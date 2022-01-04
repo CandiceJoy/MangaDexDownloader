@@ -1,3 +1,6 @@
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -147,6 +150,7 @@ public class MangaDownloader
 		return uuid;
 	}
 	
+	@SuppressWarnings( "ResultOfMethodCallIgnored" )
 	private static boolean isValidUUID( String uuid )
 	{
 		if( uuid == null )
@@ -204,7 +208,7 @@ public class MangaDownloader
 		}
 	}
 	
-	public static JsonObject query( String url_in, MangaSettings settings )
+	public static JsonObject query( String url_in, @NotNull MangaSettings settings )
 	{
 		settings.getDebug( "enabled" );
 		
@@ -238,7 +242,7 @@ public class MangaDownloader
 		throw new RuntimeException( "Could not get Json from URL" );
 	}
 	
-	private static String searchFor( String manga )
+	private static @Nullable String searchFor( String manga )
 	{
 		JsonObject root = query( "https://api.mangadex.org/manga/?title=" + URLEncoder.encode( manga, Charset.defaultCharset() ) + "&order[relevance]=desc&limit=1&availableTranslatedLanguage[]=" + settings.get( "language" ), settings );
 		int total = root.getInt( "total" );

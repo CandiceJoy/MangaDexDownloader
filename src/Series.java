@@ -19,6 +19,7 @@ public class Series
 		page_chapter = new HashMap<>();
 	}
 	
+	@SuppressWarnings( "unused" )
 	public String getName()
 	{
 		return name;
@@ -29,16 +30,19 @@ public class Series
 		return chapter_volume.get( page_chapter.get( page ) );
 	}
 	
+	@SuppressWarnings( "unused" )
 	public ArrayList<String> getVolumes()
 	{
 		return volumes;
 	}
 	
+	@SuppressWarnings( "unused" )
 	public String getChapter( int page )
 	{
 		return page_chapter.get( page );
 	}
 	
+	@SuppressWarnings( "unused" )
 	public ArrayList<String> getChapters()
 	{
 		return chapters;
@@ -86,6 +90,7 @@ public class Series
 		return chapters.size();
 	}
 	
+	@Override
 	public String toString()
 	{
 		StringBuilder output = new StringBuilder( "Volumes\n" );

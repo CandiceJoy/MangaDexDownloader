@@ -14,6 +14,7 @@ public class MangaDownloaderThread extends Thread
 		this.out_path = out_in;
 	}
 	
+	@Override
 	public void run()
 	{
 		try

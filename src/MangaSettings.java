@@ -1,3 +1,6 @@
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -33,6 +36,7 @@ public class MangaSettings
 	                                                       { "1", "0" } }; //trues in [row][0], falses in [row][1]; assume all lowercase
 	private MangaProperties properties = null;
 	
+	@SuppressWarnings( "ResultOfMethodCallIgnored" )
 	public MangaSettings( File propfile_in )
 	{
 		propfile = propfile_in;
@@ -263,7 +267,8 @@ public class MangaSettings
 		return invalidProperty( key, false );
 	}
 	
-	private String getDefault( String propkey )
+	@Contract( pure = true )
+	private @Nullable String getDefault( String propkey )
 	{
 		for( String[] strings : PROPERTIES_SCHEMA )
 		{

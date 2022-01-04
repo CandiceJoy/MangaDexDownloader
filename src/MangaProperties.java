@@ -23,6 +23,8 @@
  * questions.
  */
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -66,7 +68,7 @@ public class MangaProperties extends Properties
 		headers.add( header );
 	}
 	
-	private void store0( BufferedWriter bw )
+	private void store0( @NotNull BufferedWriter bw )
 			throws IOException
 	{
 		bw.write( "# " + new Date() );
@@ -110,8 +112,8 @@ public class MangaProperties extends Properties
 		bw.close();
 	}
 	
-	private String saveConvert( String theString,
-	                            boolean escapeSpace )
+	private @NotNull String saveConvert( @NotNull String theString,
+	                                     boolean escapeSpace )
 	{
 		int len = theString.length();
 		int bufLen = len * 2;

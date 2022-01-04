@@ -39,6 +39,7 @@ public class Log
 		logger.debug( "- " + message );
 	}
 	
+	@SuppressWarnings( "unused" )
 	public static void trace( Object message )
 	{
 		Logger logger = Logger.getLogger( getCallingClass() );
@@ -70,6 +71,7 @@ public class Log
 		System.exit( 0 );
 	}
 	
+	@SuppressWarnings( "rawtypes" )
 	private static Class getCallingClass()
 	{
 		StackWalker walker = StackWalker.getInstance( StackWalker.Option.RETAIN_CLASS_REFERENCE );

@@ -1,3 +1,6 @@
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
@@ -42,6 +45,7 @@ public class Manga
 	private int current_download;
 	private long start_time;
 	
+	@SuppressWarnings( "ResultOfMethodCallIgnored" )
 	public Manga( String uuid_in, MangaSettings properties_in )
 	{
 		uuid = uuid_in;
@@ -114,7 +118,7 @@ public class Manga
 		}
 	}
 	
-	public static int getNumberFromFile( File file, MangaSettings settings )
+	public static int getNumberFromFile( @NotNull File file, @NotNull MangaSettings settings )
 	{
 		String format = settings.get( "image_filename_format" );
 		String image_ext = settings.get( "image_file_extension" );
@@ -139,7 +143,8 @@ public class Manga
 		json = obj;
 	}
 	
-	private String sanitise( String in )
+	@Contract( pure = true )
+	private @NotNull String sanitise( @NotNull String in )
 	{
 		return in.replaceAll( "\\?", "" );
 	}
@@ -235,12 +240,14 @@ public class Manga
 		return title.getString( language );
 	}
 	
+	@SuppressWarnings( "unused" )
 	public String getTitle()
 	{
 		return title;
 	}
 	
-	private void delete( File delete_me )
+	@SuppressWarnings( "ResultOfMethodCallIgnored" )
+	private void delete( @NotNull File delete_me )
 	{
 		File[] allContents = delete_me.listFiles();
 		
@@ -292,6 +299,7 @@ public class Manga
 		return true;
 	}
 	
+	@SuppressWarnings( "ResultOfMethodCallIgnored" )
 	private void populateDownloadStart()
 	{
 		int current;
@@ -504,6 +512,7 @@ public class Manga
 		}
 	}
 	
+	@SuppressWarnings( "ResultOfMethodCallIgnored" )
 	private void archive( File[] files, String path, int start_at )
 	{
 		File dest = new File( path );
@@ -520,9 +529,9 @@ public class Manga
 			for( File file : files )
 			{
 				Path externalTxtFile = Paths.get( file.getPath() );
-				Path pathInZipfile = zipfs.getPath( MangaSettings.SLASH + file.getName() );
+				Path pathInZipFile = zipfs.getPath( MangaSettings.SLASH + file.getName() );
 				// copy a file into the zip file
-				Files.copy( externalTxtFile, pathInZipfile,
+				Files.copy( externalTxtFile, pathInZipFile,
 				            StandardCopyOption.REPLACE_EXISTING );
 				
 				count++;
@@ -537,7 +546,7 @@ public class Manga
 		src.renameTo( dest );
 	}
 	
-	private String getFilename( int number )
+	private @NotNull String getFilename( int number )
 	{
 		return format.replaceAll( String.valueOf( symbol ), String.valueOf( number ) );
 	}
