@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Class" type="Application" factoryName="Application" show_console_on_std_err="true" show_console_on_std_out="true">
     <output_file path="C:\Users\Candice\Dropbox\Programming\Manga\console.log" is_save="true" />
-    <log_file alias="Log" path="$PROJECT_DIR$/log.log" show_all="true" skipped="false" />
     <log_file alias="Settings" path="$PROJECT_DIR$/manga.properties" skipped="false" />
+    <log_file alias="Log" path="$PROJECT_DIR$/log.log" skipped="false" />
     <option name="MAIN_CLASS_NAME" value="MangaDownloader" />
     <module name="Manga" />
     <extension name="coverage" sample_coverage="false">

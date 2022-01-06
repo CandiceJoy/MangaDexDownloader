@@ -9,19 +9,13 @@
       <excludeFolder url="file://$MODULE_DIR$/out/production" />
     </content>
     <content url="file://$MODULE_DIR$/out/production" />
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="17" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="KotlinJavaRuntime" level="project" />
-    <orderEntry type="library" exported="" name="javax.json" level="application" />
-    <orderEntry type="library" exported="" name="apache-log4j-2.17" level="project" />
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/20.1.0/annotations-20.1.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" exported="" name="jetbrains.annotations" level="application" />
+    <orderEntry type="library" exported="" name="javax.json.api" level="application" />
+    <orderEntry type="library" exported="" name="apache.logging.log4j.api" level="application" />
+    <orderEntry type="library" exported="" name="apache.logging.log4j.core" level="application" />
+    <orderEntry type="library" exported="" name="glassfish.jakarta.json" level="application" />
   </component>
 </module>

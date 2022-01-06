@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <Configuration status="WARN">
+        <Appenders>
+            <!-- Simple console logger -->
+            <Console name="consoleout" target="SYSTEM_OUT">
+                <PatternLayout>
+                    <Pattern>%-5p %m%n</Pattern>
+                </PatternLayout>
+            </Console>
+            <File name="fileout" fileName="./log.log" immediateFlush="true" append="false">
+                <PatternLayout>
+                    <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5p %m%n</Pattern>
+                </PatternLayout>
+            </File>
+        </Appenders>
+        <Loggers>
+            <Root level="trace">
+                <AppenderRef ref="fileout" level="trace"/>
+                <AppenderRef ref="consoleout" level="info"/>
+            </Root>
+        </Loggers>
+    </Configuration>
