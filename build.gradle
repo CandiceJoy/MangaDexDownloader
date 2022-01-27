@@ -1,0 +1,63 @@
+plugins {
+	id 'java'
+	id 'application'
+	id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+version '1.0-SNAPSHOT'
+def javaxjsonversion = "1.1.4"
+
+repositories {
+	mavenCentral()
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs("src/main/java")
+		}
+	}
+}
+
+jar {
+	from sourceSets.main.output
+
+	manifest {
+		attributes 'Main-Class' : 'MangaDownloader'
+	}
+}
+
+// build.gradle (Groovy syntax)
+run {
+	standardInput = System.in
+}
+
+/*jar {
+	manifest {
+		attributes 'Main-Class' : 'MangaDownloader'
+	}
+}*/
+
+application {
+	mainClass = 'MangaDownloader'
+}
+
+dependencies {
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+	// https://mvnrepository.com/artifact/javax.json/javax.json-api
+	implementation group : 'javax.json', name : 'javax.json-api', version : javaxjsonversion
+
+	// https://mvnrepository.com/artifact/org.glassfish/javax.json
+	implementation group : 'org.glassfish', name : 'javax.json', version : javaxjsonversion
+
+	implementation "org.jetbrains:annotations:16.0.2"
+
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1'
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
+}
+
+test {
+	useJUnitPlatform()
+}
